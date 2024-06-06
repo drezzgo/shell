@@ -2,7 +2,7 @@
  *    Programmed By: Mohammed Isam [mohammed_isam1984@yahoo.com]
  *    Copyright 2020 (c)
  * 
- *    file: prompt.c
+ *    file: dump.c
  *    This file is part of the "Let's Build a Linux Shell" tutorial.
  *
  *    This tutorial is free software: you can redistribute it and/or modify
@@ -17,39 +17,13 @@
  *
  *    You should have received a copy of the GNU General Public License
  *    along with this tutorial.  If not, see <http://www.gnu.org/licenses/>.
- */    
+ */
 
-#include <stdio.h>
-#include "shell.h"
-#include "symtab/symtab.h"
+#include "../shell.h"
+#include "../symtab/symtab.h"
 
-
-void print_prompt1(void)
+int dump(int argc, char **argv)
 {
-    struct symtab_entry_s *entry = get_symtab_entry("PS1");
-
-    if(entry && entry->val)
-    {
-        fprintf(stderr, "%s", entry->val);
-    }
-    else
-    {
-        fprintf(stderr, "$ ");
-    }
+    dump_local_symtab();
+    return 0;
 }
-
-
-void print_prompt2(void)
-{
-    struct symtab_entry_s *entry = get_symtab_entry("PS2");
-
-    if(entry && entry->val)
-    {
-        fprintf(stderr, "%s", entry->val);
-    }
-    else
-    {
-        fprintf(stderr, "> ");
-    }
-}
-

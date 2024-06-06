@@ -1,8 +1,8 @@
 /* 
- *    Programmed By: Mohammed Isam [mohammed_isam1984@yahoo.com]
+ *    Programmed By: Mohammed Isam Mohammed [mohammed_isam1984@yahoo.com]
  *    Copyright 2020 (c)
  * 
- *    file: prompt.c
+ *    file: builtins.c
  *    This file is part of the "Let's Build a Linux Shell" tutorial.
  *
  *    This tutorial is free software: you can redistribute it and/or modify
@@ -19,37 +19,11 @@
  *    along with this tutorial.  If not, see <http://www.gnu.org/licenses/>.
  */    
 
-#include <stdio.h>
-#include "shell.h"
-#include "symtab/symtab.h"
+#include "../shell.h"
 
-
-void print_prompt1(void)
+struct builtin_s builtins[] =
 {
-    struct symtab_entry_s *entry = get_symtab_entry("PS1");
+    { "dump"    , dump       },
+};
 
-    if(entry && entry->val)
-    {
-        fprintf(stderr, "%s", entry->val);
-    }
-    else
-    {
-        fprintf(stderr, "$ ");
-    }
-}
-
-
-void print_prompt2(void)
-{
-    struct symtab_entry_s *entry = get_symtab_entry("PS2");
-
-    if(entry && entry->val)
-    {
-        fprintf(stderr, "%s", entry->val);
-    }
-    else
-    {
-        fprintf(stderr, "> ");
-    }
-}
-
+int builtins_count = sizeof(builtins)/sizeof(struct builtin_s);

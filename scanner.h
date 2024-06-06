@@ -2,7 +2,7 @@
  *    Programmed By: Mohammed Isam [mohammed_isam1984@yahoo.com]
  *    Copyright 2020 (c)
  * 
- *    file: prompt.c
+ *    file: scanner.h
  *    This file is part of the "Let's Build a Linux Shell" tutorial.
  *
  *    This tutorial is free software: you can redistribute it and/or modify
@@ -17,39 +17,22 @@
  *
  *    You should have received a copy of the GNU General Public License
  *    along with this tutorial.  If not, see <http://www.gnu.org/licenses/>.
- */    
+ */
 
-#include <stdio.h>
-#include "shell.h"
-#include "symtab/symtab.h"
+#ifndef SCANNER_H
+#define SCANNER_H
 
-
-void print_prompt1(void)
+struct token_s
 {
-    struct symtab_entry_s *entry = get_symtab_entry("PS1");
+    struct source_s *src;       /* source of input */
+    int    text_len;            /* length of token text */
+    char   *text;               /* token text */
+};
 
-    if(entry && entry->val)
-    {
-        fprintf(stderr, "%s", entry->val);
-    }
-    else
-    {
-        fprintf(stderr, "$ ");
-    }
-}
+/* the special EOF token, which indicates the end of input */
+extern struct token_s eof_token;
 
+struct token_s *tokenize(struct source_s *src);
+void free_token(struct token_s *tok);
 
-void print_prompt2(void)
-{
-    struct symtab_entry_s *entry = get_symtab_entry("PS2");
-
-    if(entry && entry->val)
-    {
-        fprintf(stderr, "%s", entry->val);
-    }
-    else
-    {
-        fprintf(stderr, "> ");
-    }
-}
-
+#endif
