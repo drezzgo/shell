@@ -1,27 +1,4 @@
-/* 
- *    Programmed By: Mohammed Isam [mohammed_isam1984@yahoo.com]
- *    Copyright 2020 (c)
- * 
- *    file: wordexp.c
- *    This file is part of the "Let's Build a Linux Shell" tutorial.
- *
- *    This tutorial is free software: you can redistribute it and/or modify
- *    it under the terms of the GNU General Public License as published by
- *    the Free Software Foundation, either version 3 of the License, or
- *    (at your option) any later version.
- *
- *    This tutorial is distributed in the hope that it will be useful,
- *    but WITHOUT ANY WARRANTY; without even the implied warranty of
- *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *    GNU General Public License for more details.
- *
- *    You should have received a copy of the GNU General Public License
- *    along with this tutorial.  If not, see <http://www.gnu.org/licenses/>.
- */
-
-/* required macro definition for popen() and pclose() */
 #define _POSIX_C_SOURCE 200809L
-
 #include <stdio.h>
 #include <unistd.h>
 #include <string.h>
@@ -36,7 +13,7 @@
 #include "executor.h"
 
 
-/* special value to represent an invalid variable */
+
 #define INVALID_VAR     ((char *)-1)
 
 
@@ -48,14 +25,14 @@
  */
 struct word_s *make_word(char *str)
 {
-    /* alloc struct memory */
+    
     struct word_s *word = malloc(sizeof(struct word_s));
     if(!word)
     {
         return NULL;
     }
 
-    /* alloc string memory */
+    
     size_t  len  = strlen(str);
     char   *data = malloc(len+1);
     
@@ -65,13 +42,13 @@ struct word_s *make_word(char *str)
         return NULL;
     }
     
-    /* copy string */
+    
     strcpy(data, str);
     word->data = data;
     word->len  = len;
     word->next = NULL;
     
-    /* return struct */
+    
     return word;
 }
 
@@ -88,11 +65,11 @@ void free_all_words(struct word_s *first)
         
 	if(del->data)
         {
-            /* free the word text */
+            
             free(del->data);
         }
         
-	/* free the word */
+	
         free(del);
     }
 }
@@ -130,7 +107,7 @@ char *wordlist_to_str(struct word_s *word)
         str2 += w->len+1;
         w     = w->next;
     }
-    /* remove the last separator */
+    
     str2[-1] = '\0';
     return str;
 }
@@ -158,12 +135,12 @@ void delete_char_at(char *str, size_t index)
  */
 int is_name(char *str)
 {
-    /* names start with alpha char or an underscore... */
+    
     if(!isalpha(*str) && *str != '_')
     {
         return 0;
     }
-    /* ...and contain alphanumeric chars and/or underscores */
+    
     while(*++str)
     {
         if(!isalnum(*str) && *str != '_')
@@ -186,13 +163,13 @@ int is_name(char *str)
  */
 size_t find_closing_quote(char *data)
 {
-    /* check the type of quote we have */
+    
     char quote = data[0];
     if(quote != '\'' && quote != '"' && quote != '`')
     {
         return 0;
     }
-    /* find the matching closing quote */
+    
     size_t i = 0, len = strlen(data);
     while(++i < len)
     {
@@ -221,13 +198,13 @@ size_t find_closing_quote(char *data)
  */
 size_t find_closing_brace(char *data)
 {
-    /* check the type of opening brace we have */
+    
     char opening_brace = data[0], closing_brace;
     if(opening_brace != '{' && opening_brace != '(')
     {
         return 0;
     }
-    /* determine the closing brace according to the opening brace */
+    
     if(opening_brace == '{')
     {
         closing_brace = '}';
@@ -236,19 +213,19 @@ size_t find_closing_brace(char *data)
     {
         closing_brace = ')';
     }
-    /* find the matching closing brace */
+    
     size_t ob_count = 1, cb_count = 0;
     size_t i = 0, len = strlen(data);
     while(++i < len)
     {
         if((data[i] == '"') || (data[i] == '\'') || (data[i] == '`'))
         {
-            /* skip escaped quotes */
+            
             if(data[i-1] == '\\')
             {
                 continue;
             }
-            /* skip quoted substrings */
+            
             char quote = data[i];
             while(++i < len)
             {
@@ -263,7 +240,7 @@ size_t find_closing_brace(char *data)
             }
             continue;
         }
-        /* keep the count of opening and closing braces */
+        
         if(data[i-1] != '\\')
         {
             if(data[i] == opening_brace)
@@ -275,7 +252,7 @@ size_t find_closing_brace(char *data)
                 cb_count++;
             }
         }
-        /* break when we have a matching number of opening and closing braces */
+        
         if(ob_count == cb_count)
         {
             break;
@@ -301,15 +278,15 @@ size_t find_closing_brace(char *data)
  */
 char *substitute_str(char *s1, char *s2, size_t start, size_t end)
 {
-    /* get the prefix (the part before start) */
+    
     char before[start+1];
     strncpy(before, s1, start);
     before[start]   = '\0';
-    /* get the postfix (the part after end) */
+    
     size_t afterlen = strlen(s1)-end+1;
     char after[afterlen];
     strcpy(after, s1+end+1);
-    /* alloc memory for the new string */
+    
     size_t totallen = start+afterlen+strlen(s2);
     char *final = malloc(totallen+1);
     if(!final)
@@ -317,17 +294,17 @@ char *substitute_str(char *s1, char *s2, size_t start, size_t end)
         fprintf(stderr, "error: insufficient memory to perform variable substitution\n");
         return NULL;
     }
-    if(!totallen)       /* empty string */
+    if(!totallen)       
     {
         final[0] = '\0';
     }
-    else                /* concatenate the three parts into one string */
+    else                
     {
         strcpy(final, before);
         strcat(final, s2    );
         strcat(final, after );
     }
-    /* return the new string */
+    
     return final;
 }
 
@@ -336,7 +313,7 @@ int substitute_word(char **pstart, char **p, size_t len,
                     char *(func)(char *),
                     int add_quotes)
 {
-    /* extract the word to be substituted */
+    
     char *tmp = malloc(len+1);
     if(!tmp)
     {
@@ -346,7 +323,7 @@ int substitute_word(char **pstart, char **p, size_t len,
     strncpy(tmp, *p, len);
     tmp[len--] = '\0';
 
-    /* and expand it */
+    
     char *tmp2;
     if(func)
     {
@@ -365,7 +342,7 @@ int substitute_word(char **pstart, char **p, size_t len,
         tmp2 = tmp;
     }
 
-    /* error expanding the string. keep the original string as-is */
+    
     if(!tmp2)
     {
         (*p) += len;
@@ -373,18 +350,18 @@ int substitute_word(char **pstart, char **p, size_t len,
         return 0;
     }
 
-    /* save our current position in the word */
+    
     size_t i = (*p)-(*pstart);
 
-    /* substitute the expanded word */
+    
     tmp = quote_val(tmp2, add_quotes);
     free(tmp2);
     if(tmp)
     {
-        /* substitute the expanded word */
+        
         if((tmp2 = substitute_str(*pstart, tmp, i, i+len)))
         {
-            /* adjust our pointer to point to the new string */
+            
             free(*pstart);
             (*pstart) = tmp2;
             len = strlen(tmp);
@@ -392,7 +369,7 @@ int substitute_word(char **pstart, char **p, size_t len,
         free(tmp);
     }
 
-    /* adjust our pointer to point to the new string */
+    
     (*p) = (*pstart)+i+len-1;
     return 1;
 }
@@ -440,7 +417,7 @@ struct word_s *word_expand(char *orig_word)
         switch(*p)
         {
             case '~':
-                /* don't perform tilde expansion inside double quotes */
+                
                 if(in_double_quotes)
                 {
                     break;
@@ -452,7 +429,7 @@ struct word_s *word_expand(char *orig_word)
                  */
                 if(p == pstart || (in_var_assign && (p[-1] == ':' || (p[-1] == '=' && var_assign_eq == 1))))
                 {
-                    /* find the end of the tilde prefix */
+                    
                     int tilde_quoted = 0;
                     int endme = 0;
                     p2 = p+1;
@@ -494,15 +471,15 @@ struct word_s *word_expand(char *orig_word)
                         p2++;
                     }
                     
-		    /* if any part of the prefix is quoted, no expansion is done */
+		    
                     if(tilde_quoted)
                     {
-                        /* just skip the tilde prefix */
+                        
                         p = p2;
                         break;
                     }
                     
-		    /* otherwise, extract the prefix */
+		    
                     len = p2-p;
                     substitute_word(&pstart, &p, len, tilde_expand, !in_double_quotes);
                     expanded = 1;
@@ -510,17 +487,17 @@ struct word_s *word_expand(char *orig_word)
                 break;
                 
             case '"':
-                /* toggle quote mode */
+                
                 in_double_quotes = !in_double_quotes;
                 break;
                 
             case '=':
-                /* skip it if inside double quotes */
+                
                 if(in_double_quotes)
                 {
                     break;
                 }
-                /* check the previous string is a valid var name */
+                
                 len = p-pstart;
                 tmp = malloc(len+1);
                 
@@ -548,30 +525,30 @@ struct word_s *word_expand(char *orig_word)
                 break;
                 
             case '\\':
-                /* skip backslash (we'll remove it later on) */
+                
                 p++;
                 break;
                 
             case '\'':
-                /* if inside double quotes, treat the single quote as a normal char */
+                
                 if(in_double_quotes)
                 {
                     break;
                 }
                 
-		/* skip everything, up to the closing single quote */
+		
                 p += find_closing_quote(p);
                 break;
                 
             case '`':
-                /* find the closing back quote */
+                
                 if((len = find_closing_quote(p)) == 0)
                 {
-                    /* not found. bail out */
+                    
                     break;
                 }
                 
-		/* otherwise, extract the command and substitute its output */
+		
                 substitute_word(&pstart, &p, len+1, command_substitute, 0);
                 expanded = 1;
                 break;
@@ -587,10 +564,10 @@ struct word_s *word_expand(char *orig_word)
                 switch(c)
                 {
                     case '{':
-                        /* find the closing quote */
+                        
                         if((len = find_closing_brace(p+1)) == 0)
                         {
-                            /* not found. bail out */
+                            
                             break;
                         }
                         
@@ -611,7 +588,7 @@ struct word_s *word_expand(char *orig_word)
                      * arithmetic expansion $(()) or command substitution $().
                      */
                     case '(':
-                        /* check if we have one or two opening braces */
+                        
                         i = 0;
                         
 			if(p[2] == '(')
@@ -619,10 +596,10 @@ struct word_s *word_expand(char *orig_word)
                             i++;
                         }
                         
-			/* find the closing quote */
+			
                         if((len = find_closing_brace(p+1)) == 0)
                         {
-                            /* not found. bail out */
+                            
                             break;
                         }
                         
@@ -637,7 +614,7 @@ struct word_s *word_expand(char *orig_word)
                         break;
                                                 
                     default:
-                        /* var names must start with an alphabetic char or _ */
+                        
                         if(!isalpha(p[1]) && p[1] != '_')
                         {
                             break;
@@ -645,7 +622,7 @@ struct word_s *word_expand(char *orig_word)
                         
 			p2 = p+1;
                         
-			/* get the end of the var name */
+			
                         while(*p2)
                         {
                             if(!isalnum(*p2) && *p2 != '_')
@@ -655,13 +632,13 @@ struct word_s *word_expand(char *orig_word)
                             p2++;
                         }
                         
-			/* empty name */
+			
                         if(p2 == p+1)
                         {
                             break;
                         }
                         
-			/* perform variable expansion */
+			
                         substitute_word(&pstart, &p, p2-p, var_expand, 0);
                         expanded = 1;
                         break;
@@ -677,18 +654,18 @@ struct word_s *word_expand(char *orig_word)
         }
     } while(*(++p));
     
-    /* if we performed word expansion, do field splitting */
+    
     struct word_s *words = NULL;
     if(expanded)
     {
         words = field_split(pstart);
     }
     
-    /* no expansion done, or no field splitting done */
+    
     if(!words)
     {
         words = make_word(pstart);
-        /* error making word struct */
+        
         if(!words)
         {
             fprintf(stderr, "error: insufficient memory\n");
@@ -698,11 +675,11 @@ struct word_s *word_expand(char *orig_word)
     }
     free(pstart);
 
-    /* perform pathname expansion and quote removal */
+    
     words = pathnames_expand(words);
     remove_quotes(words);
 
-    /* return the expanded list */
+    
     return words;
 }
 
@@ -719,7 +696,7 @@ char *tilde_expand(char *s)
     char   *s2 = NULL;
     struct symtab_entry_s *entry;
 
-    /* null tilde prefix. substitute with the value of home */
+    
     if(len == 1)
     {
         entry = get_symtab_entry("HOME");
@@ -738,14 +715,14 @@ char *tilde_expand(char *s)
             pass = getpwuid(getuid());
             if(pass)
             {
-                /* get the value of home */
+                
                 home = pass->pw_dir;
             }
         }
     }
     else
     {
-        /* we have a login name */
+        
         struct passwd *pass;
         pass = getpwnam(s+1);
         if(pass)
@@ -754,13 +731,13 @@ char *tilde_expand(char *s)
         }
     }
 
-    /* we have a NULL value */
+    
     if(!home)
     {
         return NULL;
     }
 
-    /* return the home dir we've found */
+    
     s2 = malloc(strlen(home)+1);
     if(!s2)
     {
@@ -811,7 +788,7 @@ char *tilde_expand(char *s)
  */
 char *var_expand(char *orig_var_name)
 {
-    /* sanity check */
+    
     if(!orig_var_name)
     {
        return NULL;
@@ -821,27 +798,27 @@ char *var_expand(char *orig_var_name)
      *  if the var substitution is in the $var format, remove the $.
      *  if it's in the ${var} format, remove the ${}.
      */
-    /* skip the $ */
+    
     orig_var_name++;
     size_t len = strlen(orig_var_name);
     if(*orig_var_name == '{')
     {
-        /* remove the } */
+        
         orig_var_name[len-1] = '\0';
         orig_var_name++;
     }
 
-    /* check we don't have an empty varname */
+    
     if(!*orig_var_name)
     {
        return NULL;
     }
 
     int get_length = 0;
-    /* if varname starts with #, we need to get the string length */
+    
     if(*orig_var_name == '#')
     {
-        /* use of '#' should come with omission of ':' */
+        
         if(strchr(orig_var_name, ':'))
         {
             fprintf(stderr, "error: invalid variable substitution: %s\n", orig_var_name);
@@ -851,7 +828,7 @@ char *var_expand(char *orig_var_name)
         orig_var_name++;
     }
 
-    /* check we don't have an empty varname */
+    
     if(!*orig_var_name)
     {
         return NULL;
@@ -862,22 +839,22 @@ char *var_expand(char *orig_var_name)
      * value or substitution we are going to perform on the variable.
      */
     char *sub   = strchr(orig_var_name, ':');
-    if(!sub)    /* we have a substitution without a colon */
+    if(!sub)    
     {
-        /* search for the char that indicates what type of substitution we need to do */
+        
         sub = strchr_any(orig_var_name, "-=?+%#");
     }
 
-    /* get the length of the variable name (without the substitution part) */
+    
     len = sub ? (size_t)(sub-orig_var_name) : strlen(orig_var_name);
 
-    /* if we have a colon+substitution, skip the colon */
+    
     if(sub && *sub == ':')
     {
         sub++;
     }
 
-    /* copy the varname to a buffer */
+    
     char var_name[len+1];
     strncpy(var_name, orig_var_name, len);
     var_name[len]   = '\0';
@@ -897,17 +874,17 @@ char *var_expand(char *orig_var_name)
      */
     if(!tmp || tmp == empty_val)
     {
-        /* do we have a substitution clause? */
+        
         if(sub && *sub)
         {
-            /* check the substitution operation we need to perform */
+            
             switch(sub[0])
             {
-                case '-':          /* use default value */
+                case '-':          
                     tmp = sub+1;
                     break;
 
-                case '=':          /* assign the variable a value */
+                case '=':          
                     /*
                      * NOTE: only variables, not positional or special parameters can be
                      *       assigned this way (we'll fix this later).
@@ -920,7 +897,7 @@ char *var_expand(char *orig_var_name)
                     setme = 1;
                     break;
 
-                case '?':          /* print error msg if variable is null/unset */
+                case '?':          
                     if(sub[1] == '\0')
                     {
                         fprintf(stderr, "error: %s: parameter not set\n", var_name);
@@ -931,7 +908,7 @@ char *var_expand(char *orig_var_name)
                     }
                     return INVALID_VAR;
 
-                /* use alternative value (we don't have alt. value here) */
+                
                 case '+':
                     return NULL;
 
@@ -943,11 +920,11 @@ char *var_expand(char *orig_var_name)
                 case '%':
                     break;
 
-                default:                /* unknown operator */
+                default:                
                     return INVALID_VAR;
             }
         }
-        /* no substitution clause. return NULL as the variable is unset/null */
+        
         else
         {
             tmp = empty_val;
@@ -958,18 +935,18 @@ char *var_expand(char *orig_var_name)
      */
     else
     {
-        /* do we have a substitution clause? */
+        
         if(sub && *sub)
         {
-            /* check the substitution operation we need to perform */
+            
             switch(sub[0])
             {
-                case '-':          /* use default value */
-                case '=':          /* assign the variable a value */
-                case '?':          /* print error msg if variable is null/unset */
+                case '-':          
+                case '=':          
+                case '?':          
                     break;
 
-                /* use alternative value */
+                
                 case '+':
                     tmp = sub+1;
                     break;
@@ -979,27 +956,27 @@ char *var_expand(char *orig_var_name)
                  * bash expands the pattern part, but ksh doesn't seem to do
                  * the same (as far as the manpage is concerned). we follow ksh.
                  */
-                case '%':       /* match suffix */
+                case '%':       
                     sub++;
-                    /* perform word expansion on the value */
+                    
                     char *p = word_expand_to_str(tmp);
-                    /* word expansion failed */
+                    
                     if(!p)
                     {
                         return INVALID_VAR;
                     }
                     int longest = 0;
-                    /* match the longest or shortest suffix */
+                    
                     if(*sub == '%')
                     {
                         longest = 1, sub++;
                     }
-                    /* perform the match */
+                    
                     if((len = match_suffix(sub, p, longest)) == 0)
                     {
                         return p;
                     }
-                    /* return the match */
+                    
                     char *p2 = malloc(len+1);
                     if(p2)
                     {
@@ -1009,27 +986,27 @@ char *var_expand(char *orig_var_name)
                     free(p);
                     return p2;
 
-                case '#':       /* match prefix */
+                case '#':       
                     sub++;
-                    /* perform word expansion on the value */
+                    
                     p = word_expand_to_str(tmp);
-                    /* word expansion failed */
+                    
                     if(!p)
                     {
                         return INVALID_VAR;
                     }
                     longest = 0;
-                    /* match the longest or shortest suffix */
+                    
                     if(*sub == '#')
                     {
                         longest = 1, sub++;
                     }
-                    /* perform the match */
+                    
                     if((len = match_prefix(sub, p, longest)) == 0)
                     {
                         return p;
                     }
-                    /* return the match */
+                    
                     p2 = malloc(strlen(p)-len+1);
                     if(p2)
                     {
@@ -1038,11 +1015,11 @@ char *var_expand(char *orig_var_name)
                     free(p);
                     return p2;
 
-                default:                /* unknown operator */
+                default:                
                     return INVALID_VAR;
             }
         }
-        /* no substitution clause. return the variable's original value */
+        
     }
 
     /*
@@ -1057,15 +1034,15 @@ char *var_expand(char *orig_var_name)
         }
     }
 
-    /* do we need to set new value to the variable? */
+    
     if(setme)
     {
-        /* if variable not defined, add it now */
+        
         if(!entry)
         {
             entry = add_to_symtab(var_name);
         }
-        /* and set its value */
+        
         if(entry)
         {
             symtab_entry_setval(entry, tmp);
@@ -1084,7 +1061,7 @@ char *var_expand(char *orig_var_name)
         {
             sprintf(buf, "%lu", strlen(tmp));
         }
-        /* get a copy of the buffer */
+        
         p = malloc(strlen(buf)+1);
         if(p)
         {
@@ -1093,7 +1070,7 @@ char *var_expand(char *orig_var_name)
     }
     else
     {
-        /* "normal" variable value */
+        
         p = malloc(strlen(tmp)+1);
         if(p)
         {
@@ -1101,13 +1078,13 @@ char *var_expand(char *orig_var_name)
         }
     }
 
-    /* free the expanded word list */
+    
     if(expanded)
     {
         free(tmp);
     }
 
-    /* return the result */
+    
     return p ? : INVALID_VAR;
 }
 
@@ -1150,13 +1127,13 @@ char *command_substitute(char *orig_cmd)
     
     if(backquoted)
     {
-        /* remove the last back quote */
+        
         if(cmd[cmdlen-1] == '`')
         {
             cmd[cmdlen-1] = '\0';
         }
         
-	/* fix the backslash-escaped chars */
+	
         char *p1 = cmd;
         
 	do
@@ -1174,7 +1151,7 @@ char *command_substitute(char *orig_cmd)
     }
     else
     {
-        /* remove the last closing brace */
+        
         if(cmd[cmdlen-1] == ')')
         {
             cmd[cmdlen-1] = '\0';
@@ -1183,7 +1160,7 @@ char *command_substitute(char *orig_cmd)
 
     FILE *fp = popen(cmd2, "r");
 
-    /* check if we have opened the pipe */
+    
     if(!fp)
     {
         free(cmd2);
@@ -1191,13 +1168,13 @@ char *command_substitute(char *orig_cmd)
         return NULL;
     }
 
-    /* read the command output */
+    
     while((i = fread(b, 1, 1024, fp)))
     {
-        /* first time. alloc buffer */
+        
         if(!buf)
         {
-            /* add 1 for the null terminating byte */
+            
             buf = malloc(i+1);
             if(!buf)
             {
@@ -1206,7 +1183,7 @@ char *command_substitute(char *orig_cmd)
             
 	    p   = buf;
         }
-        /* extend buffer */
+        
         else
         {
             char *buf2 = realloc(buf, bufsz+i+1);
@@ -1224,7 +1201,7 @@ char *command_substitute(char *orig_cmd)
         
 	bufsz += i;
         
-	/* copy the input and add the null terminating byte */
+	
         memcpy(p, b, i);
         p[i] = '\0';
     }
@@ -1235,7 +1212,7 @@ char *command_substitute(char *orig_cmd)
         return NULL;
     }
     
-    /* now remove any trailing newlines */
+    
     i = bufsz-1;
     
     while(buf[i] == '\n' || buf[i] == '\r')
@@ -1245,10 +1222,10 @@ char *command_substitute(char *orig_cmd)
     }
 
 fin:
-    /* close the pipe */
+    
     pclose(fp);
 
-    /* free used memory */
+    
     free(cmd2);
     
     if(!buf)
@@ -1342,23 +1319,23 @@ struct word_s *field_split(char *str)
     char *IFS = entry ? entry->val : NULL;
     char *p;
     
-    /* POSIX says no IFS means: "space/tab/NL" */
+    
     if(!IFS)
     {
         IFS = " \t\n";
     }
     
-    /* POSIX says empty IFS means no field splitting */
+    
     if(IFS[0] == '\0')
     {
         return NULL;
     }
     
-    /* get the IFS spaces and delimiters separately */
+    
     char IFS_space[64];
     char IFS_delim[64];
     
-    if(strcmp(IFS, " \t\n") == 0)   /* "standard" IFS */
+    if(strcmp(IFS, " \t\n") == 0)   
     {
         IFS_space[0] = ' ' ;
         IFS_space[1] = '\t';
@@ -1366,7 +1343,7 @@ struct word_s *field_split(char *str)
         IFS_space[3] = '\0';
         IFS_delim[0] = '\0';
     }
-    else                            /* "custom" IFS */
+    else                            
     {
         p  = IFS;
         char *sp = IFS_space;
@@ -1393,24 +1370,24 @@ struct word_s *field_split(char *str)
     int    fields = 1;
     char   quote  = 0;
     
-    /* skip any leading whitespaces in the string */
+    
     skip_IFS_whitespace(&str, IFS_space);
     
-    /* estimate the needed number of fields */
+    
     do
     {
         switch(str[i])
         {
-            /* skip escaped chars */
+            
             case '\\':
-                /* backslash has no effect inside single quotes */
+                
                 if(quote != '\'')
                 {
                     i++;
                 }
                 break;
 
-            /* don't count whitespaces inside quotes */
+            
             case '\'':
             case '"':
             case '`':
@@ -1425,7 +1402,7 @@ struct word_s *field_split(char *str)
                 break;
 
             default:
-                /* skip normal characters if we're inside quotes */
+                
                 if(quote)
                 {
                     break;
@@ -1443,7 +1420,7 @@ struct word_s *field_split(char *str)
         }
     } while(++i < len);
 
-    /* we have only one field. no field splitting needed */
+    
     if(fields == 1)
     {
         return NULL;
@@ -1452,7 +1429,7 @@ struct word_s *field_split(char *str)
     struct word_s *first_field = NULL;
     struct word_s *cur         = NULL;
     
-    /* create the fields */
+    
     i     = 0;
     j     = 0;
     quote = 0;
@@ -1461,16 +1438,16 @@ struct word_s *field_split(char *str)
     {
         switch(str[i])
         {
-            /* skip escaped chars */
+            
             case '\\':
-                /* backslash has no effect inside single quotes */
+                
                 if(quote != '\'')
                 {
                     i++;
                 }
                 break;
 
-            /* skip single quoted substrings */
+            
             case '\'':
                 p = str+i+1;
                 while(*p && *p != '\'')
@@ -1480,7 +1457,7 @@ struct word_s *field_split(char *str)
                 i = p-str;
                 break;
 
-            /* remember if we're inside/outside double and back quotes */
+            
             case '"':
             case '`':
                 if(quote == str[i])
@@ -1494,7 +1471,7 @@ struct word_s *field_split(char *str)
                 break;
 
             default:
-                /* skip normal characters if we're inside quotes */
+                
                 if(quote)
                 {
                     break;
@@ -1507,7 +1484,7 @@ struct word_s *field_split(char *str)
                 if(is_IFS_char(str[i], IFS_space) ||
                    is_IFS_char(str[i], IFS_delim) || (i == len))
                 {
-                    /* copy the field text */
+                    
                     char *tmp = malloc(i-j+1);
     
     		    if(!tmp)
@@ -1519,7 +1496,7 @@ struct word_s *field_split(char *str)
     		    strncpy(tmp, str+j, i-j);
                     tmp[i-j] = '\0';
     
-    		    /* create a new struct for the field */
+    		    
                     struct word_s *fld = malloc(sizeof(struct word_s));
     
     		    if(!fld)
@@ -1549,13 +1526,13 @@ struct word_s *field_split(char *str)
     
     		    k = i;
     
-    		    /* skip trailing IFS spaces/delimiters */
+    		    
                     skip_IFS_delim(str, IFS_space, IFS_delim, &i, len);
                     j = i;
     
     		    if(i != k && i < len)
                     {
-                        i--;     /* go back one step so the loop will work correctly */
+                        i--;     
                     }
                 }
                 break;
@@ -1578,7 +1555,7 @@ struct word_s *pathnames_expand(struct word_s *words)
     {
         char *p = w->data;
     
-    	/* check if we should perform filename globbing */
+    	
         if(!has_glob_chars(p, strlen(p)))
         {
             pw = w;
@@ -1589,35 +1566,35 @@ struct word_s *pathnames_expand(struct word_s *words)
     	glob_t glob;
         char **matches = get_filename_matches(p, &glob);
     
-    	/* no matches found */
+    	
         if(!matches || !matches[0])
         {
             globfree(&glob);
         }
         else
         {
-            /* save the matches */
+            
             struct word_s *head = NULL, *tail = NULL;
     
     	    for(size_t j = 0; j < glob.gl_pathc; j++)
             {
-                /* skip '..' and '.' */
+                
                 if(matches[j][0] == '.' &&
                   (matches[j][1] == '.' || matches[j][1] == '\0' || matches[j][1] == '/'))
                 {
                     continue;
                 }
     
-    		/* add the path to the list */
+    		
                 if(!head)
                 {
-                    /* first item in the list */
+                    
                     head = make_word(matches[j]);
                     tail = head;
                 }
                 else
                 {
-                    /* add to the list's tail */
+                    
                     tail->next = make_word(matches[j]);
     
     		    if(tail->next)
@@ -1627,7 +1604,7 @@ struct word_s *pathnames_expand(struct word_s *words)
                 }
             }
     
-    	    /* add the new list to the existing list */
+    	    
             if(w == words)
             {
                 words = head;
@@ -1640,14 +1617,14 @@ struct word_s *pathnames_expand(struct word_s *words)
     	    pw = tail;
             tail->next = w->next;
     
-    	    /* free the word we've just globbed */
+    	    
             w->next = NULL;
             free_all_words(w);
             w = tail;
     
-    	    /* free the matches list */
+    	    
             globfree(&glob);
-            /* finished globbing this word */
+            
         }
     
     	pw = w;
@@ -1680,13 +1657,13 @@ void remove_quotes(struct word_s *wordlist)
             switch(*p)
             {
                 case '"':
-                    /* toggle quote mode */
+                    
                     in_double_quotes = !in_double_quotes;
                     delete_char_at(p, 0);
                     break;
 
                 case '\'':
-                    /* don't delete if inside double quotes */
+                    
                     if(in_double_quotes)
                     {
                         p++;
@@ -1695,13 +1672,13 @@ void remove_quotes(struct word_s *wordlist)
 
                     delete_char_at(p, 0);
                 
-		    /* find the closing quote */
+		    
                     while(*p && *p != '\'')
                     {
                         p++;
                     }
                 
-		    /* and remove it */
+		    
                     if(*p == '\'')
                     {
                         delete_char_at(p, 0);
@@ -1745,7 +1722,7 @@ void remove_quotes(struct word_s *wordlist)
                     }
                     else
                     {
-                        /* parse single-character backslash quoting. */
+                        
                         delete_char_at(p, 0);
                         p++;
                     }
@@ -1757,11 +1734,11 @@ void remove_quotes(struct word_s *wordlist)
             }
         }
 
-        /* update the word's length */
+        
         word->len = strlen(word->data);
 
 
-        /* move on to the next word */
+        
         word = word->next;
     }
 }

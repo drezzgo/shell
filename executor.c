@@ -1,24 +1,3 @@
-/* 
- *    Programmed By: Mohammed Isam [mohammed_isam1984@yahoo.com]
- *    Copyright 2020 (c)
- * 
- *    file: executor.c
- *    This file is part of the "Let's Build a Linux Shell" tutorial.
- *
- *    This tutorial is free software: you can redistribute it and/or modify
- *    it under the terms of the GNU General Public License as published by
- *    the Free Software Foundation, either version 3 of the License, or
- *    (at your option) any later version.
- *
- *    This tutorial is distributed in the hope that it will be useful,
- *    but WITHOUT ANY WARRANTY; without even the implied warranty of
- *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *    GNU General Public License for more details.
- *
- *    You should have received a copy of the GNU General Public License
- *    along with this tutorial.  If not, see <http://www.gnu.org/licenses/>.
- */    
-
 #include <stdio.h>
 #include <stdlib.h>
 #include <unistd.h>
@@ -88,7 +67,7 @@ char *search_path(char *file)
 	    strcpy(p, path);
             return p;
         }
-        else    /* file not found */
+        else    
         {
             p = p2;
             if(*p2 == ':')
@@ -150,25 +129,25 @@ int do_simple_command(struct node_s *node)
         return 0;
     }
     
-    int argc = 0;           /* arguments count */
-    int targc = 0;          /* total alloc'd arguments count */
+    int argc = 0;           
+    int targc = 0;          
     char **argv = NULL;
     char *str;
 
     while(child)
     {
         str = child->val.str;
-        /*perform word expansion */
+        
         struct word_s *w = word_expand(str);
         
-        /* word expansion failed */
+        
         if(!w)
         {
             child = child->next_sibling;
             continue;
         }
 
-        /* add the words to the arguments list */
+        
         struct word_s *w2 = w;
         while(w2)
         {
@@ -184,17 +163,17 @@ int do_simple_command(struct node_s *node)
             w2 = w2->next;
         }
         
-        /* free the memory used by the expanded words */
+        
         free_all_words(w);
         
-        /* check the next word */
+        
         child = child->next_sibling;
     }
 
-    /* even if arc == 0, we need to alloc memory for argv */
+    
     if(check_buffer_bounds(&argc, &targc, &argv))
     {
-        /* NULL-terminate the array */
+        
         argv[argc] = NULL;
     }
 

@@ -1,44 +1,3 @@
-/*
- * Copyright (c) 2012 the authors listed at the following URL, and/or
- * the authors of referenced articles or incorporated external code:
- * http://en.literateprograms.org/Shunting_yard_algorithm_(C)?action=history&offset=20080201043325
- * 
- * Permission is hereby granted, free of charge, to any person obtaining
- * a copy of this software and associated documentation files (the
- * "Software"), to deal in the Software without restriction, including
- * without limitation the rights to use, copy, modify, merge, publish,
- * distribute, sublicense, and/or sell copies of the Software, and to
- * permit persons to whom the Software is furnished to do so, subject to
- * the following conditions:
- * 
- * The above copyright notice and this permission notice shall be
- * included in all copies or substantial portions of the Software.
- * 
- * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
- * EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
- * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.
- * IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY
- * CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT,
- * TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
- * SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
- *  
- * Retrieved from: http://en.literateprograms.org/Shunting_yard_algorithm_(C)?oldid=12454
- * 
- * 
- * Copyright (c) 2019 Mohammed Isam [mohammed_isam1984@yahoo.com]
- * 
- * Extensive modifications have been applied to this file to include most of the C
- * language operators and to make this file usable as part of the Layla shell.
- * Please compare with the original file at the above link to see the differences.
- * 
- * UPDATE: the original file doesn't seem to be available anymore, but the archived
- * version can be accessed from here:
- * https://web.archive.org/web/20110718214204/http://en.literateprograms.org/Shunting_yard_algorithm_(C)
- * 
- * For more information, see: https://en.wikipedia.org/wiki/Shunting-yard_algorithm
- * 
- */
-
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
@@ -351,44 +310,44 @@ long eval_predec(struct stack_item_s *a1, struct stack_item_s *unused __attribut
 }
 
 
-/* extended operator list */
-#define CH_GT                2       /* greater than */
-#define CH_LT                3       /* lesser than */
-#define CH_GE                4       /* greater than or equals */
-#define CH_LE                5       /* lesser than or equals */
-#define CH_RSH               6       /* shift right */
-#define CH_LSH               7       /* shitf left */
-#define CH_NE                8       /* not equals */
-#define CH_EQ                9       /* equals */
-#define CH_ASSIGN            10      /* assignment */
-#define CH_PRE_INC           11      /* pre-increment op */
-#define CH_POST_INC          12      /* post-increment op */
-#define CH_PRE_DEC           13      /* pre-decrement op */
-#define CH_POST_DEC          14      /* post-decrement op */
-#define CH_B_AND             15      /* bitwise AND */
-#define CH_B_OR              16      /* bitwise OR */
-#define CH_B_XOR             17      /* bitwise XOR */
-#define CH_AND               18      /* logical AND */
-#define CH_OR                19      /* logical OR */
-#define CH_EXP               20      /* exponent or ** */
-#define CH_MINUS             21      /* unary minus */
-#define CH_PLUS              22      /* unary plus */
-#define CH_ASSIGN_PLUS       23      /* += assignment */
-#define CH_ASSIGN_MINUS      24      /* -= assignment */
-#define CH_ASSIGN_MULT       25      /* *= assignment */
-#define CH_ASSIGN_DIV        26      /* /= assignment */
-#define CH_ASSIGN_MOD        27      /* %= assignment */
-#define CH_ASSIGN_LSH        28      /* <<= assignment */
-#define CH_ASSIGN_RSH        29      /* >>= assignment */
-#define CH_ASSIGN_AND        30      /* &= assignment */
-#define CH_ASSIGN_XOR        31      /* ^= assignment */
-#define CH_ASSIGN_OR         32      /* |= assignment */
+
+#define CH_GT                2       
+#define CH_LT                3       
+#define CH_GE                4       
+#define CH_LE                5       
+#define CH_RSH               6       
+#define CH_LSH               7       
+#define CH_NE                8       
+#define CH_EQ                9       
+#define CH_ASSIGN            10      
+#define CH_PRE_INC           11      
+#define CH_POST_INC          12      
+#define CH_PRE_DEC           13      
+#define CH_POST_DEC          14      
+#define CH_B_AND             15      
+#define CH_B_OR              16      
+#define CH_B_XOR             17      
+#define CH_AND               18      
+#define CH_OR                19      
+#define CH_EXP               20      
+#define CH_MINUS             21      
+#define CH_PLUS              22      
+#define CH_ASSIGN_PLUS       23      
+#define CH_ASSIGN_MINUS      24      
+#define CH_ASSIGN_MULT       25      
+#define CH_ASSIGN_DIV        26      
+#define CH_ASSIGN_MOD        27      
+#define CH_ASSIGN_LSH        28      
+#define CH_ASSIGN_RSH        29      
+#define CH_ASSIGN_AND        30      
+#define CH_ASSIGN_XOR        31      
+#define CH_ASSIGN_OR         32      
 
 enum { ASSOC_NONE = 0, ASSOC_LEFT, ASSOC_RIGHT };
 
 /*
  * see this link for C operator precedence:
- * https://en.cppreference.com/w/c/language/operator_precedence
+ * https:
  */
 
 struct op_s
@@ -864,14 +823,14 @@ void shunt_op(struct op_s *op)
  */
 int get_ndigit(char c, int base, int *result)
 {
-    /* invalid char */
+    
     if(!isalnum(c) && c != '@' && c != '_')
     {
         return 0;
     }
     
     char max, max2;
-    /* base 10 or less: only digits 0-9 are acceptable */
+    
     if(base <= 10)
     {
         max = '0'+base-1;
@@ -883,18 +842,18 @@ int get_ndigit(char c, int base, int *result)
         goto invalid;
     }
 
-    /* base larger than 10: if the digit is 0-9, return it */
+    
     if(c >= '0' && c <= '9')
     {
         (*result) = c-'0';
         return 1;
     }
 
-    /* bases 11 to 36: small and capital letters can be used interchangeably */
+    
     if(base <= 36)
     {
-        max  = 'a'+base-11;     /* max. small letter in this base */
-        max2 = max-('a'-'A');   /* max capital letter in this base */
+        max  = 'a'+base-11;     
+        max2 = max-('a'-'A');   
         if(c >= 'a' && c <= max)
         {
             (*result) = c-'a'+10;
@@ -916,13 +875,13 @@ int get_ndigit(char c, int base, int *result)
      */
     else if(base <= 62)
     {
-        /* check the small letters first */
+        
         if(c >= 'a' && c <= 'z')
         {
             (*result) = c-'a'+10;
             return 1;
         }
-        max2 = 'A'+base-37;          /* max capital letter in this base */
+        max2 = 'A'+base-37;          
         if(c >= 'A' && c <= max2)
         {
             (*result) = c-'A'+36;
@@ -941,7 +900,7 @@ int get_ndigit(char c, int base, int *result)
     }
 
 invalid:
-    /* invalid digit */
+    
     fprintf(stderr, "error: digit %c exceeds the value of the base %d\n", c, base);
     error = 1;
     return 0;
@@ -961,7 +920,7 @@ long get_num(char *s, int *char_count)
     long num = 0;
     int num2, base = 10;
 
-    /* check if we have a predefined base */
+    
     if(*s2 == '0')
     {
         switch(s2[1])
@@ -985,20 +944,20 @@ long get_num(char *s, int *char_count)
         }
     }
 
-    /* get the number according to the given base (use base 10 if none) */
+    
     while(get_ndigit(*s2, base, &num2))
     {
         num = (num*base) + num2;
         s2++;
     }
 
-    /* check we didn't encounter an invalid digit */
+    
     if(error)
     {
         return 0;
     }
 
-    /* if binary, octal or hex base, return the result */
+    
     if(base != 10)
     {
         (*char_count) = s2-s;
@@ -1021,7 +980,7 @@ long get_num(char *s, int *char_count)
             num = (num*base) + num2;
             s2++;
         }
-        /* check we didn't encounter an invalid digit */
+        
         if(error)
         {
             return 0;
@@ -1040,7 +999,7 @@ struct symtab_entry_s *get_var(char *s, int *char_count)
     char *ss = s;
     if(*ss == '$')
     {
-        ss++;        /* var names can begin with '$'. skip it */
+        ss++;        
     }
     char *s2 = ss;
     while(*s2 && valid_name_char(*s2))
@@ -1048,23 +1007,23 @@ struct symtab_entry_s *get_var(char *s, int *char_count)
         s2++;
     }
     int len = s2-ss;
-    /* empty var name */
+    
     if(len == 0)
     {
         (*char_count) = s2-s;
         return NULL;
     }
-    /* copy the name */
+    
     char name[len+1];
     strncpy(name, ss, len);
     name[len] = '\0';
-    /* get the symbol table entry for that var */
+    
     struct symtab_entry_s *e = get_symtab_entry(name);
     if(!e)
     {
         e = add_to_symtab(name);
     }
-    /* get the real length, including leading '$' if present */
+    
     (*char_count) = s2-s;
     return e;
 }
@@ -1099,7 +1058,7 @@ char *arithm_expand(char *orig_expr)
 {
     char   *expr;
     char   *tstart       = NULL;
-    struct  op_s startop = { 'X', 0, ASSOC_NONE, 0, 0, NULL };    /* Dummy operator to mark start */
+    struct  op_s startop = { 'X', 0, ASSOC_NONE, 0, 0, NULL };    
     struct  op_s *op     = NULL;
     int     n1, n2;
     struct  op_s *lastop = &startop;
@@ -1114,12 +1073,12 @@ char *arithm_expand(char *orig_expr)
         fprintf(stderr, "error: insufficient memory for arithmetic expansion\n");
         return NULL;
     }
-    /* lose the $(( */
+    
     if(orig_expr[0] == '$' && orig_expr[1] == '(' && orig_expr[2] == '(')
     {
         strcpy(baseexp, orig_expr+3);
         baseexp_len -= 3;
-        /* and the )) */
+        
         if(baseexp[baseexp_len-1] == ')' && baseexp[baseexp_len-2] == ')')
         {
             baseexp[baseexp_len-2] = '\0';
@@ -1130,14 +1089,14 @@ char *arithm_expand(char *orig_expr)
         strcpy(baseexp, orig_expr);
     }
 
-    /* init our stacks */
+    
     nopstack = 0;
     nnumstack = 0;
-    /* clear the error flag */
+    
     error = 0;
     expr = baseexp;
     
-    /* and go ... */
+    
     for( ; *expr; )
     {
        if(!tstart)
@@ -1146,7 +1105,7 @@ char *arithm_expand(char *orig_expr)
             {
                 if(lastop && (lastop == &startop || lastop->op != ')'))
                 {
-                    /* take care of unary plus and minus */
+                    
                     if(op->op == '-')
                     {
                         op = OP_UMINUS;
@@ -1161,10 +1120,10 @@ char *arithm_expand(char *orig_expr)
                         goto err;
                     }
                 }
-                /* fix the pre-post ++/-- dilemma */
+                
                 if(op->op == CH_POST_INC || op->op == CH_POST_DEC)
                 {
-                    /* post ++/-- has higher precedence over pre ++/-- */
+                    
                     if(expr < baseexp+2 || !valid_name_char(expr[-2]))
                     {
                         if(op == OP_POST_INC)
@@ -1256,10 +1215,10 @@ char *arithm_expand(char *orig_expr)
                 }
                 tstart = NULL;
 
-                /* fix the pre-post ++/-- dilemma */
+                
                 if(op->op == CH_POST_INC || op->op == CH_POST_DEC)
                 {
-                    /* post ++/-- has higher precedence over pre ++/-- */
+                    
                     if(expr < baseexp+2 || !valid_name_char(expr[-2]))
                     {
                         if(op == OP_POST_INC)
@@ -1343,15 +1302,15 @@ char *arithm_expand(char *orig_expr)
         }
     }
 
-    /* empty arithmetic expression result */
+    
     if(!nnumstack)
     {
-        /*return false as the result */
+        
         free(baseexp);
         return NULL;
     }
 
-    /* we must have only 1 item on the stack now */
+    
     if(nnumstack != 1)
     {
         fprintf(stderr, "error: Number stack has %d elements after evaluation. Should be 1.\n", nnumstack);

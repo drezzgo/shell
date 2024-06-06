@@ -1,28 +1,7 @@
-/* 
- *    Programmed By: Mohammed Isam [mohammed_isam1984@yahoo.com]
- *    Copyright 2020 (c)
- * 
- *    file: shell.h
- *    This file is part of the "Let's Build a Linux Shell" tutorial.
- *
- *    This tutorial is free software: you can redistribute it and/or modify
- *    it under the terms of the GNU General Public License as published by
- *    the Free Software Foundation, either version 3 of the License, or
- *    (at your option) any later version.
- *
- *    This tutorial is distributed in the hope that it will be useful,
- *    but WITHOUT ANY WARRANTY; without even the implied warranty of
- *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *    GNU General Public License for more details.
- *
- *    You should have received a copy of the GNU General Public License
- *    along with this tutorial.  If not, see <http://www.gnu.org/licenses/>.
- */
-
 #ifndef SHELL_H
 #define SHELL_H
 
-#include <stddef.h>     /* size_t */
+#include <stddef.h>     
 #include <glob.h>
 #include "source.h"
 
@@ -33,23 +12,23 @@ int  parse_and_execute(struct source_s *src);
 
 void initsh(void);
 
-/* shell builtin utilities */
+
 int dump(int argc, char **argv);
 
-/* struct for builtin utilities */
+
 struct builtin_s
 {
-    char *name;    /* utility name */
-    int (*func)(int argc, char **argv); /* function to call to execute the utility */
+    char *name;    
+    int (*func)(int argc, char **argv); 
 };
 
-/* the list of builtin utilities */
+
 extern struct builtin_s builtins[];
 
-/* and their count */
+
 extern int builtins_count;
 
-/* struct to represent the words resulting from word expansion */
+
 struct word_s
 {
     char  *data;
@@ -57,7 +36,7 @@ struct word_s
     struct word_s *next;
 };
 
-/* word expansion functions */
+
 struct  word_s *make_word(char *word);
 void    free_all_words(struct word_s *first);
 
@@ -79,13 +58,13 @@ void    remove_quotes(struct word_s *wordlist);
 
 char   *arithm_expand(char *__expr);
 
-/* some string manipulation functions */
+
 char   *strchr_any(char *string, char *chars);
 char   *quote_val(char *val, int add_quotes);
 int     check_buffer_bounds(int *count, int *len, char ***buf);
 void    free_buffer(int len, char **buf);
 
-/* pattern matching functions */
+
 int     has_glob_chars(char *p, size_t len);
 int     match_prefix(char *pattern, char *str, int longest);
 int     match_suffix(char *pattern, char *str, int longest);
