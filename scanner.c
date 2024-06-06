@@ -126,7 +126,7 @@ struct token_s *tokenize(struct source_s *src)
                 {
                     
                     src->curpos = src->bufsize;
-                    fprintf(stderr, "error: missing closing quote '%c'\n", nc);
+                    fprintf(stderr, "ERROR. falta el cierre '%c'\n", nc);
                     return &eof_token;
                 }
 
@@ -176,7 +176,7 @@ struct token_s *tokenize(struct source_s *src)
                     {
                         
                         src->curpos = src->bufsize;
-                        fprintf(stderr, "error: missing closing brace '%c'\n", nc);
+                        fprintf(stderr, "ERROR. falta llave de cierre '%c'\n", nc);
                         return &eof_token;
                     }
 
@@ -242,7 +242,7 @@ struct token_s *tokenize(struct source_s *src)
     struct token_s *tok = create_token(tok_buf);
     if(!tok)
     {
-        fprintf(stderr, "error: failed to alloc buffer: %s\n", strerror(errno));
+        fprintf(stderr, "ERROR. no se pudo asignar el buffer: %s\n", strerror(errno));
         return &eof_token;
     }
 

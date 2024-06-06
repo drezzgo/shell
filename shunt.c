@@ -161,7 +161,7 @@ long eval_div(struct stack_item_s *a1, struct stack_item_s *a2)
     long n2 = long_value(a2);
     if(!n2)
     {
-        fprintf(stderr, "error: Division by zero\n");
+        fprintf(stderr, "ERROR. no existe la division de 0\n");
         error = 1;
         return 0;
     }
@@ -174,7 +174,7 @@ long eval_mod(struct stack_item_s *a1, struct stack_item_s *a2)
     long n2 = long_value(a2);
     if(!n2)
     {
-        fprintf(stderr, "error: Division by zero\n");
+        fprintf(stderr, "ERROR. no existe la division de 0\n");
         error = 1;
         return 0;
     }
@@ -649,7 +649,7 @@ void push_numstackl(long val)
 {
     if(nnumstack > MAXNUMSTACK-1)
     {
-        fprintf(stderr, "error: Number stack overflow\n");
+        fprintf(stderr, "ERROR. Hay un desbordamiento de pila de números\n");
         error = 1;
         return;
     }
@@ -666,7 +666,7 @@ void push_numstackv(struct symtab_entry_s *val)
 {
     if(nnumstack > MAXNUMSTACK-1)
     {
-        fprintf(stderr, "error: Number stack overflow\n");
+        fprintf(stderr, "ERROR. Hay un desbordamiento de pila de números\n");
         error = 1;
         return;
     }

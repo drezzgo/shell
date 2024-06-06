@@ -70,7 +70,7 @@ char *read_cmd(void)
         }
         if(!ptr)
         {
-            fprintf(stderr, "error: failed to alloc buffer: %s\n", strerror(errno));
+            fprintf(stderr, "ERROR. no se pudo asignar el buffer: %s\n", strerror(errno));
             return NULL;
         }
         strcpy(ptr+ptrlen, buf);
